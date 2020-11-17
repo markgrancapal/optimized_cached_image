@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 export 'package:optimized_cached_image/widgets.dart';
 
 typedef ImageWidgetBuilder = Widget Function(
-    BuildContext context, ImageProvider imageProvider);
+    BuildContext context, ImageProvider imageProvider, Widget child);
 typedef PlaceholderWidgetBuilder = Widget Function(
     BuildContext context, String url);
 typedef ProgressIndicatorBuilder = Widget Function(
@@ -235,7 +235,18 @@ class OptimizedCacheImage extends StatelessWidget {
       }
       return OctoImage(
           image: _image,
-          imageBuilder: imageBuilder != null ? _octoImageBuilder : null,
+          imageBuilder: imageBuilder != null
+              ? (context, imageProvider, child) {
+                  try {
+                    final RenderBox renderBoxRed =
+                        _keys[index].currentContext.findRenderObject();
+                    final sizeRender = renderBoxRed.size;
+                    if (sizeRender.height != 300)
+                      _height[index] = width / sizeRender.aspectRatio;
+                  } catch (e) {}
+                  return child;
+                }
+              : null,
           placeholderBuilder:
               placeholder != null ? _octoPlaceholderBuilder : null,
           progressIndicatorBuilder: progressIndicatorBuilder != null
@@ -261,7 +272,7 @@ class OptimizedCacheImage extends StatelessWidget {
   }
 
   Widget _octoImageBuilder(BuildContext context, Widget child) {
-    return imageBuilder(context, _image);
+    return imageBuilder(context, _image, child);
   }
 
   Widget _octoPlaceholderBuilder(BuildContext context) {
