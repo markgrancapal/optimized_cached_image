@@ -235,18 +235,7 @@ class OptimizedCacheImage extends StatelessWidget {
       }
       return OctoImage(
           image: _image,
-          imageBuilder: imageBuilder != null
-              ? (context, imageProvider, child) {
-                  try {
-                    final RenderBox renderBoxRed =
-                        _keys[index].currentContext.findRenderObject();
-                    final sizeRender = renderBoxRed.size;
-                    if (sizeRender.height != 300)
-                      _height[index] = width / sizeRender.aspectRatio;
-                  } catch (e) {}
-                  return child;
-                }
-              : null,
+          imageBuilder: imageBuilder != null ? _octoImageBuilder : null,
           placeholderBuilder:
               placeholder != null ? _octoPlaceholderBuilder : null,
           progressIndicatorBuilder: progressIndicatorBuilder != null
